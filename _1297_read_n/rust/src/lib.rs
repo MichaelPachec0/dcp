@@ -2,34 +2,30 @@ use std::str;
 
 struct File<'a> {
     cursor: usize,
-    str:  &'a [u8],
+    str: &'a [u8],
 }
 
-
 impl<'a> File<'a> {
-    fn new(str: &'a str) -> Self{
+    fn new(str: &'a str) -> Self {
         Self {
             str: str.as_bytes(),
             cursor: 0,
         }
     }
-    pub fn read_n(&mut self, n: usize) -> &'a str {
-        // TODO: might see about either handling the error case, or using the ? operator.
+    pub fn read_n(&mut self, n: usize) -> Result<&'a str, str::Utf8Error> {
         if self.cursor > self.str.len() {
-            ""
+            Ok("")
         } else if self.cursor + n > self.str.len() {
             let slice = &self.str[self.cursor..];
             self.cursor += n;
-            str::from_utf8(slice).unwrap()
-        } else  {
-            let slice = &self.str[self.cursor..n];
+            str::from_utf8(slice)
+        } else {
+            let slice = &self.str[self.cursor..n + self.cursor];
             self.cursor += n;
-            str::from_utf8(slice).unwrap()
+            str::from_utf8(slice)
         }
     }
 }
-
-
 
 #[cfg(test)]
 mod tests {

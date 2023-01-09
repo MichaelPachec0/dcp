@@ -38,14 +38,18 @@ mod tests {
     //
     // For example, given a file with the content “Hello world”, three read7() returns “Hello w”, “orld” and then “”.
     #[test]
-    fn test_7() {
+    fn static_string() -> Result<(), Box<dyn std::error::Error>> {
         let expected_vec = vec!["Hello w", "orld", ""];
         let input = "Hello world";
         let mut file = File::new(input);
         let steps = 7;
         for (iteration, &expected) in expected_vec.iter().enumerate() {
-            let actual = file.read_n(steps);
-            assert_eq!(actual, expected, "ACTUAL {} DOES NOT EQUAL EXPECTED {} FOR ITERATION {}", actual, expected, iteration)
+            let actual = file.read_n(steps)?;
+            assert_eq!(
+                actual, expected,
+                "ACTUAL {actual} DOES NOT EQUAL EXPECTED {expected} FOR ITERATION {iteration}"
+            );
         }
+        Ok(())
     }
 }

@@ -30,6 +30,10 @@ impl<'a> File<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use rand::distributions::{Alphanumeric, DistString};
+    use rand::rngs::ThreadRng;
+    use rand::Rng;
+    use unicode_segmentation::UnicodeSegmentation;
     // Good morning! Here's your coding interview problem for today.
     //
     // This problem was asked by Microsoft.
@@ -52,4 +56,25 @@ mod tests {
         }
         Ok(())
     }
+
+    fn check(strings: &[String], expected_strings: &[Vec<String>], steps: usize) -> Result<(), Box<dyn std::error::Error>> {
+        for (str_iteration, string) in strings.iter().enumerate() {
+            println!(
+                "Iteration {} of {}, string: {}",
+                str_iteration + 1,
+                strings.len(),
+                string
+            );
+            let mut file_struct = File::new(string.as_str());
+            for (iteration, expected) in expected_strings[str_iteration].iter().enumerate() {
+                let actual = file_struct.read_n(steps)?;
+                assert_eq!(
+                    actual, expected,
+                    "ACTUAL {actual} DOES NOT EQUAL EXPECTED {expected} FOR ITERATION {iteration}"
+                );
+            }
+        }
+        Ok(())
+    }
+
 }

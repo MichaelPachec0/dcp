@@ -1,3 +1,4 @@
+//! Testing for random strings
 use std::str;
 
 struct File<'a> {
@@ -64,6 +65,14 @@ mod tests {
         check(&strings, &expected_strings, steps)
     }
 
+    #[test]
+    /// Testing for random strings with random lengths.
+    fn rand_len_rand_str() -> Result<(), Box<dyn std::error::Error>> {
+        let mut rng_thrd = rand::thread_rng();
+        let steps = rng_thrd.gen_range(5..20);
+        let (strings, expected_strings) = gen_input(&mut rng_thrd, steps, Some((0, 50)));
+        check(&strings, &expected_strings, steps)
+    }
 
     fn gen_input(
         rng: &mut ThreadRng,

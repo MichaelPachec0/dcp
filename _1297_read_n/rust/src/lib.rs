@@ -56,6 +56,36 @@ mod tests {
         }
         Ok(())
     }
+    #[test]
+    fn static_len_rand_str() -> Result<(), Box<dyn std::error::Error>> {
+        let mut rng_thrd = rand::thread_rng();
+        let steps = 7;
+        let (strings, expected_strings) = gen_input(&mut rng_thrd, steps, None);
+        check(&strings, &expected_strings, steps)
+    }
+
+
+    fn gen_input(
+        rng: &mut ThreadRng,
+        steps: usize,
+        option_range: Option<(usize, usize)>,
+    ) -> (Vec<String>, Vec<Vec<String>>) {
+        let strings = (0..12)
+            .into_iter()
+            .map(|_| {
+                let len = match option_range {
+                    Some((start, stop)) => rng.gen_range(start..stop),
+                    _ => steps * 3,
+                };
+                Alphanumeric.sample_string(rng, len)
+            })
+            .collect::<Vec<String>>();
+        let expected_strings = strings
+            .iter()
+            .map(|str| chunk_helper(str, steps))
+            .collect::<Vec<Vec<String>>>();
+        (strings, expected_strings)
+    }
 
     fn check(strings: &[String], expected_strings: &[Vec<String>], steps: usize) -> Result<(), Box<dyn std::error::Error>> {
         for (str_iteration, string) in strings.iter().enumerate() {
@@ -77,4 +107,13 @@ mod tests {
         Ok(())
     }
 
+    fn chunk_helper(str: &String, size: usize) -> Vec<String> {
+        let tmp_vec = str.graphemes(true).collect::<Vec<&str>>();
+        let mut str_vec = tmp_vec
+            .chunks(size)
+            .map(|vec| vec.join(""))
+            .collect::<Vec<String>>();
+        str_vec.push(String::new());
+        str_vec
+    }
 }

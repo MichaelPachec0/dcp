@@ -1,19 +1,33 @@
-use std::cmp::max;
 
+///
+///
+/// # Arguments
+///
+/// * `steps`: The number of stairs.
+///
+/// returns: usize
+///
+/// # Examples
+///
+/// ```
+///
+/// ```
 fn simple_steps(steps: usize) -> usize {
     // This is basically fibonacci
     if (0..=2).contains(&steps) {
         return steps;
     }
     let len = steps + 1;
-    let mut vec = Vec::<usize>::with_capacity(len);
+    let mut result = 0;
+    let mut vec = Vec::<usize>::with_capacity(2);
     vec.push(1);
     vec.push(1);
-    vec.push(2);
-    for iteration  in 3..len {
-        vec.push(vec[iteration-1] + vec[iteration-2]);
+    for _ in 2..len {
+        result = vec.iter().fold(0, |acc, &i| acc + i);
+        vec[0] = vec[1];
+        vec[1] = result;
     }
-    vec[steps]
+    result
 }
 
 #[cfg(test)]
@@ -43,6 +57,9 @@ mod tests {
         let max_steps = 1;
         let expected = 5;
         let result = simple_steps(input);
-        assert_eq!(result, expected, "RESULT {result} DOES NOT EQUAL EXPECTED {expected}");
+        assert_eq!(
+            result, expected,
+            "RESULT {result} DOES NOT EQUAL EXPECTED {expected}"
+        );
     }
 }

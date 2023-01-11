@@ -30,10 +30,48 @@ fn simple_steps(steps: usize) -> usize {
     result
 }
 
+
+///
+///
+/// # Arguments
+///
+/// * `steps`: The number of stairs
+/// * `step_by_iter`: The number of stairs we can climb at a time.
+///
+/// returns: usize
+///
+/// # Examples
+///
+/// ```
+///
+/// ```
+fn complex_steps(steps: usize, step_by_iter: Vec<usize>) -> usize {
+    // Theory: we can reduce the length to len of steps_by_iter and use len^2 as the size of the vec.
+    // as far I can see the code will chunk itself eventually into groups.
+    // (when steps is sufficiently long enough)
+    let len = steps + 1;
+    let mut vec = Vec::<usize>::with_capacity(len);
+    vec.push(1);
+    for i in 1..len {
+        let mut intermediary = vec![];
+        for &step_by in &step_by_iter {
+            if i.checked_sub(step_by).is_none() {
+                continue
+            }
+            let index = i - step_by;
+            let x  = vec[index];
+            intermediary.push(x)
+        }
+        let number = intermediary.iter().fold(0, |acc, i| acc + i);
+        vec.push(number);
+    }
+    vec[steps]
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
-    //Good morning! Here's your coding interview problem for today.
+    // Good morning! Here's your coding interview problem for today.
     //
     // This problem was asked by Amazon.
     //
@@ -54,12 +92,18 @@ mod tests {
     #[test]
     fn static_simple_climb() {
         let input = 4;
-        let max_steps = 1;
         let expected = 5;
         let result = simple_steps(input);
         assert_eq!(
             result, expected,
             "RESULT {result} DOES NOT EQUAL EXPECTED {expected}"
         );
+    }
+    #[test]
+    fn static_complex_climb() {
+        let input = 22;
+        let step_by = vec![1,3,4,7];
+        let result = complex_steps(input, step_by);
+        println!("{result}");
     }
 }
